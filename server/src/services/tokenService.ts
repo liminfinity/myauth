@@ -14,7 +14,7 @@ class TokenService {
     }
     verifyAccessToken(accessToken: string) {
         try {
-            const user = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET as string);
+            const user = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET as string) as UserDTO;
             return user;
         } catch (error) {
             return null;
@@ -22,7 +22,7 @@ class TokenService {
     }
     verifyRefreshToken(refresh: string) {
         try {
-            const user = jwt.verify(refresh, process.env.JWT_REFRESH_SECRET as string);
+            const user = jwt.verify(refresh, process.env.JWT_REFRESH_SECRET as string) as UserDTO;
             return user;
         } catch (error) {
             return null;

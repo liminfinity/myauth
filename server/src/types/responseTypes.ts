@@ -1,9 +1,16 @@
 import { UserDTO } from "../dto/userDTO";
-
-export interface AuthResponse {
-    user: UserDTO,
+ 
+interface Tokens {
     accessToken: string,
     refreshToken: string
+}
+
+export interface RegResponse extends Tokens {
+    email: string
+}
+
+export interface AuthResponse extends Tokens {
+    user: UserDTO,
 }
 
 export interface DBUserIdResponse {

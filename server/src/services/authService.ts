@@ -5,7 +5,7 @@ import { authDAL } from "../dal/authDAL";
 import { tokenService } from "./tokenService";
 import { UserDTO } from "../dto/userDTO";
 import { emailService } from "./emailService";
-import { AuthResponse } from "../types/responseTypes";
+import { AuthResponse, RegResponse } from "../types/responseTypes";
 import { config } from "dotenv";
 import { ApiError } from "../errors/ApiError";
 
@@ -13,13 +13,16 @@ config()
 
 class AuthService {
     async login(email: string, password: string, userAgent: string): Promise<AuthResponse> {
+        const isActivated = await authDAL.isActivated(email);
+        if (!isActivated) throw ApiError.NotActivatedError();
         const user = await authDAL.login(email, password);
         if (!user) throw ApiError.BadRequest(`User hadn't founded`)
         const {accessToken, refreshToken} = tokenService.generateTokens(user)
         await authDAL.saveToken(user.userId, refreshToken, userAgent);
+
         return {user, accessToken, refreshToken}
     }  
-    async registration(newUser: User, userAgent: string): Promise<AuthResponse> {
+    async registration(newUser: User, userAgent: string): Promise<RegResponse> {
         const hashPassword = await hash(newUser.password, 3);
         const user: User = {...newUser, password: hashPassword, userId: uuid()};
         const activationInfo: UserActivationInfo = {
@@ -35,7 +38,7 @@ class AuthService {
         const userDTO = new UserDTO(user);
         const {accessToken, refreshToken} = tokenService.generateTokens({...userDTO})
         await authDAL.saveToken(userDTO.userId, refreshToken, userAgent);
-        return {user: {...userDTO}, accessToken, refreshToken}
+        return {email: userDTO.email, accessToken, refreshToken}
 
     }
     async logout(refreshToken: string, userAgent: string): Promise<string> {
@@ -53,9 +56,14 @@ class AuthService {
     }
     async refresh(refreshToken: string, userAgent: string): Promise<AuthResponse> {
         if (!refreshToken) throw ApiError.UnauthorizedError();
+        
         const user = tokenService.verifyRefreshToken(refreshToken);
         const token = await authDAL.refresh(refreshToken, userAgent);
         if (!user || !token) throw ApiError.UnauthorizedError();
+
+        const isActivated = await authDAL.isActivated(user.email);
+        if (!isActivated) throw ApiError.NotActivatedError();
+
         const updatedUser = await authDAL.getUserById(user.userId);
         const {accessToken, refreshToken: newRefreshToken} = tokenService.generateTokens({...updatedUser})
         await authDAL.saveToken(updatedUser.userId, newRefreshToken, userAgent);

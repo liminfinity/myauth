@@ -1,10 +1,12 @@
 import dotenv from 'dotenv'
-import express, { RequestHandler } from 'express'
+import express from 'express'
+import { createServer } from 'http'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
 import { mainRouter } from './routers/mainRouter.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
+import { createSocketServer } from './socket.js'
 dotenv.config();
 
 const PORT = process.env.SERVER_PORT || 5000;
@@ -22,7 +24,11 @@ app.use(express.json())
 app.use('/', mainRouter)
 app.use(errorMiddleware);
 
-app.listen(+PORT, HOST, () => {
+const httpServer = createServer(app)
+
+const socketServer = createSocketServer(httpServer)
+
+httpServer.listen(+PORT, HOST, () => {
     console.log(`server started on ${PORT} port and ${HOST} host`)
 })
 
