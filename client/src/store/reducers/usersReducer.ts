@@ -4,20 +4,20 @@ import { isError, isPending, isFulfilled } from "../../utils/predicates";
 import { UserService } from "../../services/UserService";
 
 interface usersState {
-    users: IUser[],
+    usersList: IUser[],
     isLoading: boolean,
     errors: string[]
 }
 const initialState: usersState = {
-    users: [],
+    usersList: [],
     isLoading: false,
     errors: []
 }
-export const getUsersAction = createAsyncThunk<IUser[], undefined, {rejectValue: string}>(
+export const getUsersAction = createAsyncThunk<IUser[], string, {rejectValue: string}>(
     'users/getUsers',
-    async function (_, {rejectWithValue}) {
+    async function (query, {rejectWithValue}) {
         try {
-            const users = await UserService.getUsers();
+            const users = await UserService.getUsers(query);
             return users;
         } catch (err) {
             rejectWithValue(err.message)
@@ -33,12 +33,13 @@ const usersSlice = createSlice({
 
     },
     extraReducers: (builder) => {
+        
+        builder.addCase(getUsersAction.fulfilled, (state, action: PayloadAction<IUser[]>) => {
+            state.usersList = action.payload;
+        })
         builder.addMatcher(isFulfilled, (state) => {
             state.isLoading = false;
             state.errors = [];
-        })
-        builder.addCase(getUsersAction.fulfilled, (state, action: PayloadAction<IUser[]>) => {
-            state.users = action.payload;
         })
         builder.addMatcher(isPending, (state) => {
             state.isLoading = true;

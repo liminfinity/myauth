@@ -1,8 +1,24 @@
 import React from 'react'
+import Title from '../common/title'
+import SignUpForm from './signUpForm'
+import { Link, useLocation } from 'react-router-dom'
+import Description from '../common/description'
+import { locationState } from '../../types/routers'
+import BackLink from '../common/backLink'
 
 
 export default function SignupPage() {
+  const location = useLocation();
+  const state = location.state as locationState
   return (
-    <div>signupPage</div>
+    <main>
+      {state?.from && <BackLink to={state.from}/>}
+      <Title level={1}>Create New account</Title>
+      <SignUpForm/>
+      <Link to='/login'>
+        <Description>Already a User?</Description>
+        <Description>Log in</Description>
+      </Link>
+    </main>
   )
 }

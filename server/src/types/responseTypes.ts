@@ -16,6 +16,9 @@ export interface AuthResponse extends Tokens {
 export interface DBUserIdResponse {
     userid: string
 }
+export interface DBIdResponse {
+    id: number
+}
 export interface DBLoginResponse extends DBUserIdResponse {
     username: string,
     password: string

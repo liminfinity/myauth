@@ -1,5 +1,5 @@
 export interface IUser {
     userId: string,
-    emai: string,
+    email: string,
     username: string
 }

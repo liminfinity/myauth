@@ -30,6 +30,22 @@ class EmailService {
 
         })
     }
+    async sendCode(to: string, code: number) {
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: 'Send code',
+            text: '',
+            html: 
+                `
+                    <main>
+                        <h2>Password recovery code</h2>
+                        <span>${code}</span>
+                    </main>
+                `
+
+        })
+    }
 }
 
 const emailService = new EmailService();

@@ -12,6 +12,11 @@ interface authState {
 }
 const initialState: authState = {
     user: null,
+    // user: {
+    //     userId: "41562c8a-aac2-4110-872e-b5d30ddd7c65",
+    //     username: 'Artem',
+    //     email: 'polllll@gmail.com'
+    // },
     isLoading: false,
     errors: [],
     activatedEmail: undefined
@@ -22,6 +27,7 @@ export const loginAction = createAsyncThunk<IUser, LoginReq, {rejectValue: strin
     async function (loginReq, {rejectWithValue}) {
         try {
             const user = await AuthService.login(loginReq);
+            console.log(user)
             return user;
         } catch (err) {
             rejectWithValue(`Login error`)
@@ -29,7 +35,7 @@ export const loginAction = createAsyncThunk<IUser, LoginReq, {rejectValue: strin
     }
 )
 export const logoutAction = createAsyncThunk<undefined, undefined, {rejectValue: string}>(
-    'auth/login',
+    'auth/logout',
     async function (_, {rejectWithValue}) {
         try {
             await AuthService.logout();
@@ -38,6 +44,18 @@ export const logoutAction = createAsyncThunk<undefined, undefined, {rejectValue:
         }
     }
 )
+
+// export const checkEmail = createAsyncThunk<string, string, {rejectValue: string}>(
+//     'auth/checkEmail',
+//     async function (signupReq, {rejectWithValue}) {
+//         try {
+//             const email = await AuthService.signUp(signupReq);
+//             return email;
+//         } catch (err) {
+//             rejectWithValue(err.message)
+//         }
+//     }
+// )
 
 export const signUpAction = createAsyncThunk<string, SignUpReq, {rejectValue: string}>(
     'auth/signup',
@@ -67,13 +85,13 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-    },
-    extraReducers: (builder) => {
-        builder.addMatcher(isFulfilled, (state) => {
+        setUser(state, action: PayloadAction<IUser>) {
             state.isLoading = false;
             state.errors = [];
-            state.activatedEmail = undefined;
-        })
+            state.user = action.payload
+        }
+    },
+    extraReducers: (builder) => {
         builder.addCase(signUpAction.fulfilled, (state, action: PayloadAction<string>) => {
             
             state.activatedEmail = action.payload;
@@ -91,6 +109,11 @@ const authSlice = createSlice({
             
             state.user = action.payload;
         })
+        builder.addMatcher(isFulfilled, (state) => {
+            state.isLoading = false;
+            state.errors = [];
+            state.activatedEmail = undefined;
+        })
         builder.addMatcher(isPending, (state) => {
             state.isLoading = true;
             state.errors = [];
@@ -105,5 +128,5 @@ const authSlice = createSlice({
     },
 
 })
-
+export const {setUser} = authSlice.actions
 export default authSlice.reducer

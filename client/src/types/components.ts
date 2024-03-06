@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 
 export interface DefaultProps {
-    children: ReactNode
+    children?: ReactNode,
+    className?: string
 }

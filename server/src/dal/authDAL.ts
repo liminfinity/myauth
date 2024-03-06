@@ -69,7 +69,7 @@ class AuthDAL extends DAL {
     }
     async isActivated(email: string): Promise<boolean> {
         const res: QueryResult<{isactivated: boolean}> = await this.pool.query(`select isActivated from users 
-        join userActivation using(userId) where email=$1`, [email])
+        join userActivations using(userId) where email=$1`, [email])
         const isActivated = res.rows[0]?.isactivated;
         return isActivated
     }

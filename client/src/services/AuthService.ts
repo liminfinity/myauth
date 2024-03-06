@@ -1,4 +1,5 @@
-import { $api } from "../http";
+import { AxiosResponse } from "axios";
+import { $api, API_URL } from "../http";
 import { LoginReq, SignUpReq } from "../types/request";
 import { AuthResponse, RegResponse } from "../types/response";
 
@@ -11,9 +12,8 @@ export class AuthService {
     }
     static async login(loginData: LoginReq) {
         const res = await $api.post<AuthResponse>('/auth/login', loginData);
-        const auth = res.data;
-        localStorage.setItem('accessToken', auth.accessToken);
-        return auth.user;
+        const user = await this.getUser(res);
+        return user;
     }
     static async logout() {
         const res = await $api.post<{deleted_token: string}>('/auth/logout');
@@ -22,7 +22,17 @@ export class AuthService {
     }
     static async refresh() {
         const res = await $api.get<AuthResponse>('/auth/refresh');
-        const auth = res.data;
+        const user = await this.getUser(res);
+        return user;
+    }
+    static async checkAuth() {
+        const res = await $api.get<AuthResponse>(`${API_URL}/auth/refresh`, {withCredentials: true});
+        console.log(res)
+        const user = await this.getUser(res);
+        return user;        
+    }
+    public static async getUser(response: AxiosResponse<AuthResponse>) {
+        const auth = response.data;
         localStorage.setItem('accessToken', auth.accessToken);
         return auth.user;
     }

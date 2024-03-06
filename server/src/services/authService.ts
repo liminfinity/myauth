@@ -47,9 +47,6 @@ class AuthService {
         return deleted_token;
         
     }
-    async forgotPassword() {
-
-    }
     async activationUser(activationId: string) {
         const userId = await authDAL.activationUser(activationId);
         return userId

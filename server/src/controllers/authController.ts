@@ -21,6 +21,9 @@ class AuthController {
                     maxAge: 30 * 24 * 60 * 60 * 1000
                 })
             }
+            res.cookie('rememberMe', rememberMe, {
+                httpOnly: true
+            })
             return res.status(200).json({...authResponse, refreshToken: undefined});
         } catch (e) {
             next(e)
@@ -39,6 +42,9 @@ class AuthController {
                     maxAge: 30 * 24 * 60 * 60 * 1000
                 })
             }
+            res.cookie('rememberMe', user.rememberMe, {
+                httpOnly: true
+            })
             return res.status(200).json({...authResponse, refreshToken: undefined});  
         } catch(e) {
             next(e)
@@ -51,13 +57,6 @@ class AuthController {
             const deleted_token = await authService.logout(refreshToken, userAgent)
             res.clearCookie('refreshToken');
             return res.status(200).json({deleted_token})
-        } catch (e) {
-            next(e)
-        }
-    }
-    async forgotPassword(req: Request, res: Response, next: NextFunction) {
-        try {
-            
         } catch (e) {
             next(e)
         }
@@ -75,13 +74,15 @@ class AuthController {
     }
     async refresh(req: Request, res: Response, next: NextFunction) {
         try {
-            const {refreshToken} = req.cookies
+            const {refreshToken, rememberMe} = req.cookies
             const userAgent = req.get('user-agent') as string;
             const authResponse: AuthResponse = await authService.refresh(refreshToken, userAgent);
-            res.cookie('refreshToken', authResponse.refreshToken, {
-                httpOnly: true,
-                maxAge: 30 * 24 * 60 * 60 * 1000
-            })
+            if (rememberMe) {
+                res.cookie('refreshToken', authResponse.refreshToken, {
+                    httpOnly: true,
+                    maxAge: 30 * 24 * 60 * 60 * 1000
+                })
+            }
             return res.status(200).json({...authResponse, refreshToken: undefined});  
         } catch (e) {
             next(e)

@@ -9,3 +9,7 @@ export function isError(action: Action) {
 export function isFulfilled(action: Action) {
     return action.type.endsWith('fulfilled')
 }
+
+export function isI(myUserId: string, smbUserId: string) {
+    return myUserId === smbUserId;
+}

@@ -11,8 +11,6 @@ authRouter.post('/signup', authController.registration)
 
 authRouter.get('/activation/:activationId', authController.activationUser)
 
-authRouter.post('/forgot', authController.forgotPassword)
-
 authRouter.get('/refresh', authController.refresh)
 
 

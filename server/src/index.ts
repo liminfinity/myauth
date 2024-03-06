@@ -1,12 +1,10 @@
 import dotenv from 'dotenv'
 import express from 'express'
-import { createServer } from 'http'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
 import { mainRouter } from './routers/mainRouter.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
-import { createSocketServer } from './socket.js'
 dotenv.config();
 
 const PORT = process.env.SERVER_PORT || 5000;
@@ -15,7 +13,7 @@ const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: '*'
+    origin: process.env.CLIENT_URL
 }))
 app.use(cookieParser())
 app.use(express.json())
@@ -24,11 +22,8 @@ app.use(express.json())
 app.use('/', mainRouter)
 app.use(errorMiddleware);
 
-const httpServer = createServer(app)
 
-const socketServer = createSocketServer(httpServer)
-
-httpServer.listen(+PORT, HOST, () => {
+app.listen(+PORT, HOST, () => {
     console.log(`server started on ${PORT} port and ${HOST} host`)
 })
 

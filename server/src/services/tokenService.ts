@@ -8,7 +8,7 @@ config()
 
 class TokenService {
     generateTokens(payload: UserDTO) {
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET as string, {expiresIn: '15s'})
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET as string, {expiresIn: '15m'})
         const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, {expiresIn: '30d'})
         return {accessToken, refreshToken}
     }

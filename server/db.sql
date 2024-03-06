@@ -15,3 +15,11 @@ create table tokens (
 	token text not null,
 	userAgent text not null
 );
+
+create or replace function compareWithTemplate(template_search text, username text) 
+returns boolean as $$
+begin
+	return lower(username) like lower(template_search);
+end;
+$$
+language plpgsql;
