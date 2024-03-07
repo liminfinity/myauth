@@ -79,7 +79,28 @@ export const refreshAction = createAsyncThunk<IUser, undefined, {rejectValue: st
         }
     }
 )
-
+export const deleteAccountAction = createAsyncThunk<boolean, string, {rejectValue: string}>(
+    'auth/deleteAccount',
+    async function (userId, {rejectWithValue}) {
+        try {
+            const deleted = await AuthService.deleteAccount(userId);
+            return deleted;
+        } catch (err) {
+            rejectWithValue(err.message)
+        }
+    }
+)
+export const checkAuthAction = createAsyncThunk<IUser, undefined, {rejectValue: string}>(
+    'auth/checkAuth',
+    async function (_, {rejectWithValue}) {
+        try {
+            const user = await AuthService.checkAuth();
+            return user;
+        } catch (err) {
+            rejectWithValue(err.message)
+        }
+    }
+)
 
 const authSlice = createSlice({
     name: 'auth',
@@ -93,7 +114,6 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(signUpAction.fulfilled, (state, action: PayloadAction<string>) => {
-            
             state.activatedEmail = action.payload;
         })
         
@@ -109,10 +129,18 @@ const authSlice = createSlice({
             
             state.user = action.payload;
         })
+        builder.addCase(checkAuthAction.fulfilled, (state, action: PayloadAction<IUser>) => {
+
+            state.user = action.payload  
+        })
+        builder.addCase(deleteAccountAction.fulfilled, (state, action: PayloadAction<boolean>) => {
+            if (action.payload) {
+                state.user = null;
+            }
+        })
         builder.addMatcher(isFulfilled, (state) => {
             state.isLoading = false;
             state.errors = [];
-            state.activatedEmail = undefined;
         })
         builder.addMatcher(isPending, (state) => {
             state.isLoading = true;

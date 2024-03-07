@@ -9,6 +9,8 @@ authRouter.post('/logout', authController.logout)
 
 authRouter.post('/signup', authController.registration)
 
+authRouter.delete('/delete-account', authController.deleteAccount)
+
 authRouter.get('/activation/:activationId', authController.activationUser)
 
 authRouter.get('/refresh', authController.refresh)

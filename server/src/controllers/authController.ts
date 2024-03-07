@@ -15,6 +15,7 @@ class AuthController {
             const {email, password, rememberMe} = await loginSchema.validate(loginData);
             const userAgent = req.get('user-agent') as string;
             const authResponse: AuthResponse = await authService.login(email, password, userAgent);
+            res.clearCookie('refreshToken');
             if (rememberMe) {
                 res.cookie('refreshToken', authResponse.refreshToken, {
                     httpOnly: true,
@@ -36,6 +37,7 @@ class AuthController {
             if (isEmpty(user)) throw ApiError.BadRequest(`User hasn't been founded`);
             user = await userSchema.validate(user);
             const authResponse: RegResponse = await authService.registration(user, userAgent);
+            res.clearCookie('refreshToken');
             if (user.rememberMe) {
                 res.cookie('refreshToken', authResponse.refreshToken, {
                     httpOnly: true,
@@ -56,7 +58,17 @@ class AuthController {
             const userAgent = req.get('user-agent') as string;
             const deleted_token = await authService.logout(refreshToken, userAgent)
             res.clearCookie('refreshToken');
+            res.clearCookie('rememberMe');
             return res.status(200).json({deleted_token})
+        } catch (e) {
+            next(e)
+        }
+    }
+    async deleteAccount(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {userId} = req.query
+            const isDeleted = await authService.deleteAccount(userId as string)
+            return res.status(200).json({isDeleted})
         } catch (e) {
             next(e)
         }
@@ -77,6 +89,7 @@ class AuthController {
             const {refreshToken, rememberMe} = req.cookies
             const userAgent = req.get('user-agent') as string;
             const authResponse: AuthResponse = await authService.refresh(refreshToken, userAgent);
+            res.clearCookie('refreshToken');
             if (rememberMe) {
                 res.cookie('refreshToken', authResponse.refreshToken, {
                     httpOnly: true,

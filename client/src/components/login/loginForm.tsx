@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent } from 'react'
 import RememberCB from '../auth/rememberCB'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import AuthInput from '../auth/authInput'
 import Button from '../common/button'
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons'
@@ -10,9 +10,9 @@ import { loginAction } from '../../store/reducers/authReducer'
 import { locationState } from '../../types/routers'
 
 export default function LoginForm() {
-    const navigate = useNavigate();
     const location = useLocation();
-    const {from} = location.state as locationState  
+    console.log(location)
+    const {from} = location.state as locationState || {}
     const {user} = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch();
     const [form, setForm] = useImmer({
@@ -20,12 +20,12 @@ export default function LoginForm() {
         password: '',
         rememberMe: false
       })
-      if (user) return navigate(from || '/main', {
-        replace: true
-    })
+    if (user) return <Navigate to={from || '/'} replace/>
+
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
         setForm(draft => {
-            draft[e.target.name] = e.target.value;
+            const input = e.target;
+            draft[input.name] = input[input.type === 'checkbox' ? 'checked' : 'value']
         })
     }
 
@@ -36,12 +36,14 @@ export default function LoginForm() {
     return (
         <form onSubmit={handleSubmit}>
             <fieldset>
-                <AuthInput icon={faEnvelope} name='email' placeholder='Email' handleChange={handleChange} value={form.email}/>
-                <AuthInput icon={faLock} name='password' placeholder='Password' handleChange={handleChange} value={form.password}/>
+                <AuthInput icon={faEnvelope} name='email'type='email' placeholder='Email' 
+                handleChange={handleChange} value={form.email}/>
+                <AuthInput icon={faLock} name='password' type='password' placeholder='Password' 
+                handleChange={handleChange} value={form.password}/>
             </fieldset>
             <section>
-            <RememberCB name='rememberMe' checked={form.rememberMe} handleChange={handleChange}/>
-            <Link to='/forgot'>Forgot password?</Link>
+                <RememberCB name='rememberMe' checked={form.rememberMe} handleChange={handleChange}/>
+                <Link to='/check-email' state={{from: location.pathname}}>Forgot password?</Link>
             </section>
             <Button type='submit'>Log in with your account</Button>
         </form>

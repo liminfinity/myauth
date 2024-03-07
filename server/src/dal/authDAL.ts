@@ -73,6 +73,13 @@ class AuthDAL extends DAL {
         const isActivated = res.rows[0]?.isactivated;
         return isActivated
     }
+    async deleteAccount(userId: string) {
+        const res = await this.pool.query(
+            `delete from users where userId=$1`,
+            [userId]);
+        console.log(res.rowCount);
+        return res.rowCount;
+    }
 
 }
 

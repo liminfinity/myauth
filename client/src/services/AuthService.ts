@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { $api, API_URL } from "../http";
 import { LoginReq, SignUpReq } from "../types/request";
 import { AuthResponse, RegResponse } from "../types/response";
@@ -16,9 +16,18 @@ export class AuthService {
         return user;
     }
     static async logout() {
-        const res = await $api.post<{deleted_token: string}>('/auth/logout');
-        if (!res.data.deleted_token) throw new Error("Server error");
+        await $api.post<{deleted_token: string}>('/auth/logout');
         localStorage.removeItem('accessToken');
+    }
+    static async deleteAccount(userId: string) {
+        const res = await $api.delete<{isDeleted: boolean}>('/auth/delete-account', {
+            params: {
+                userId
+            }
+        });
+        localStorage.removeItem('accessToken');
+        console.log(res.data.isDeleted)
+        return res.data.isDeleted;
     }
     static async refresh() {
         const res = await $api.get<AuthResponse>('/auth/refresh');
@@ -26,8 +35,7 @@ export class AuthService {
         return user;
     }
     static async checkAuth() {
-        const res = await $api.get<AuthResponse>(`${API_URL}/auth/refresh`, {withCredentials: true});
-        console.log(res)
+        const res = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, {withCredentials: true});
         const user = await this.getUser(res);
         return user;        
     }

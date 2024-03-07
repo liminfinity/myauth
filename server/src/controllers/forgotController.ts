@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { userService } from "../services/userService";
-import { emailSchema, passwordSchema, recoveryPasswordSchema } from "../validation/userValidation";
+import { emailSchema, recoveryPasswordSchema } from "../validation/userValidation";
 import { forgotService } from "../services/forgotService";
 import { AuthResponse } from "../types/responseTypes";
 
@@ -17,8 +17,8 @@ class ForgotController {
     async sendCode(req: Request, res: Response, next: NextFunction) {
         try {
             const {email, recoveryCode} = req.body;
-            const isExist = await forgotService.sendCode(email, recoveryCode);
-            return res.status(200).json({isExist})
+            const codeId = await forgotService.sendCode(email, recoveryCode);
+            return res.status(200).json({codeId})
         } catch (e) {
             next(e)
         }

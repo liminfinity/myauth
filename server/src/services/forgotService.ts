@@ -13,7 +13,7 @@ class ForgotService {
     async checkEmail(email: string) {
         const userId = await forgotDAL.checkEmail(email);
         if (!userId) throw new Error("Email isn't exist");
-        const recoveryCode = codeGenerator();
+        const recoveryCode = String(codeGenerator());
         await forgotDAL.deleteCode(email);
         const isSaved = await forgotDAL.saveCode(email, recoveryCode)
         if (!isSaved) throw new Error("Recovery code hadn't been saved");
@@ -21,20 +21,20 @@ class ForgotService {
         return userId;
     }
     async sendCode(email: string, recoveryCode: number) {
-        const isExist = await forgotDAL.checkCode(email, recoveryCode);
-        if (!isExist) throw new Error("Recovery code isn't exist");
-        return isExist
+        const codeId = await forgotDAL.checkCode(email, recoveryCode);
+        if (!codeId) throw new Error("Recovery code isn't exist");
+        return codeId
     }
     async restorePassword(email: string, newPassword: string, userAgent: string) {
         const hashPassword = await hash(newPassword, 3);
         const password = await forgotDAL.restorePassword(email, hashPassword);
         await forgotDAL.deleteCode(email);
         await forgotDAL.deleteUserTokens(email);
-        if (!password) throw new Error('Server error')
+        if (!password) throw new Error('Server error');
 
         const user = await authDAL.login(email, newPassword);
-        if (!user) throw ApiError.BadRequest(`User hadn't founded`)
-        const {accessToken, refreshToken} = tokenService.generateTokens(user)
+        if (!user) throw ApiError.BadRequest(`User hadn't founded`);
+        const {accessToken, refreshToken} = tokenService.generateTokens(user);
         await authDAL.saveToken(user.userId, refreshToken, userAgent);
 
         return {user, accessToken, refreshToken}

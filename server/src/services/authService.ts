@@ -53,18 +53,22 @@ class AuthService {
     }
     async refresh(refreshToken: string, userAgent: string): Promise<AuthResponse> {
         if (!refreshToken) throw ApiError.UnauthorizedError();
-        
+
         const user = tokenService.verifyRefreshToken(refreshToken);
         const token = await authDAL.refresh(refreshToken, userAgent);
-        if (!user || !token) throw ApiError.UnauthorizedError();
 
+        if (!user || !token) throw ApiError.UnauthorizedError();
         const isActivated = await authDAL.isActivated(user.email);
         if (!isActivated) throw ApiError.NotActivatedError();
-
         const updatedUser = await authDAL.getUserById(user.userId);
         const {accessToken, refreshToken: newRefreshToken} = tokenService.generateTokens({...updatedUser})
         await authDAL.saveToken(updatedUser.userId, newRefreshToken, userAgent);
         return {user: {...updatedUser}, accessToken, refreshToken: newRefreshToken}
+    }
+    async deleteAccount(userId: string) {
+        const deletedCount = await authDAL.deleteAccount(userId);
+        if (!deletedCount) throw new Error(`User hadn't been deleted`)
+        return true;
     }
 }
 

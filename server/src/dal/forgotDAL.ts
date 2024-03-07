@@ -11,14 +11,14 @@ class ForgotDAL extends DAL {
         const userId = res.rows[0]?.userid
         return userId;
     }
-    async saveCode(email: string, code: number) {
+    async saveCode(email: string, code: string) {
         const res: QueryResult<DBIdResponse> = await this.pool.query(
-            `insert into recoveryCodes (email, code) values ($1, $2) returning id`, [email, code])
+            `insert into recoveryCodes (email, recoveryCode) values ($1, $2) returning id`, [email, code])
         return res.rows[0]?.id;
     }
     async checkCode(email: string, code: number) {
         const res: QueryResult<DBIdResponse> = await this.pool.query(
-            `select id from recoveryCodes where email=$1 and code=$2`, [email, code])
+            `select id from recoveryCodes where email=$1 and recoveryCode=$2`, [email, code])
         return res.rows[0]?.id;
     }
     async deleteCode(email: string) {

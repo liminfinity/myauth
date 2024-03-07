@@ -30,7 +30,7 @@ class EmailService {
 
         })
     }
-    async sendCode(to: string, code: number) {
+    async sendCode(to: string, recoveryCode: string) {
         await this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,
@@ -40,7 +40,7 @@ class EmailService {
                 `
                     <main>
                         <h2>Password recovery code</h2>
-                        <span>${code}</span>
+                        <span>${recoveryCode}</span>
                     </main>
                 `
 

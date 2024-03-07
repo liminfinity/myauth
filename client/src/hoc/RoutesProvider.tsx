@@ -2,20 +2,24 @@ import React from 'react'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import LoginPage from '../components/login/loginPage'
 import SignupPage from '../components/signup/signupPage'
-import ForgotPage from '../components/login/forgotPage'
 import { Provider } from 'react-redux'
 import store from '../store'
 import RequireAuth from './RequireAuth'
 import AuthProvider from './AuthProvider'
 import UsersPage from '../components/users/usersPage'
 import MainLayout from '../components/layout/mainLayout'
+import CheckEmailPage from '../components/forgot/checkEmailPage'
+import SendCodePage from '../components/forgot/sendCodePage'
+import RestorePasswordPage from '../components/forgot/restorePasswordPage'
 
 export default function RoutesProvider() {
     const routes = <>
                         {/* <Route path='/' element={<Navigate to='/login' replace/>}></Route> */}
                         <Route path='/login' element={<LoginPage/>}></Route>
-                        <Route path='/forgot' element={<ForgotPage/>}></Route>
                         <Route path='/signup' element={<SignupPage/>}></Route>
+                        <Route path='/check-email' element={<CheckEmailPage/>}></Route>
+                        <Route path='/send-code' element={<SendCodePage/>}></Route>
+                        <Route path='/restore-password' element={<RestorePasswordPage/>}></Route>
                         <Route path='/' element={
                             <RequireAuth>
                                 <MainLayout/>

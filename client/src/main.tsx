@@ -3,7 +3,5 @@ import ReactDOM from 'react-dom/client'
 import RoutesProvider from './hoc/RoutesProvider.tsx'
 import './input.css'
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RoutesProvider/>
-  </React.StrictMode>,
+  <RoutesProvider/>
 )
