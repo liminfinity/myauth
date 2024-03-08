@@ -9,10 +9,10 @@ interface UserProps extends DefaultProps, Omit<IUser, 'userId'> {}
 
 export default function User({className, username, email}: UserProps) {
   return (
-    <li className={className}>
+    <li className={'glass list-none rounded-xl p-4 flex justify-center items-center flex-col gap-3 ' + (className ?? '')}>
         <Avatar/>
-        <div>
-            <Title level={3}>{username}</Title>
+        <div className='flex flex-col'>
+            <Title level={3} className='text-center'>{username}</Title>
             <Description>{email}</Description>
         </div>
     </li>

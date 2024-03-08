@@ -9,7 +9,7 @@ export default function RequireAuth({children}: DefaultProps) {
     const location = useLocation();
     const {user} = useAppSelector(state => state.auth);
     if (!user) {
-        return <Navigate to='/login' state={{from: location.pathname}}/>
+        return <Navigate to='/auth/login' state={{from: location.pathname}}/>
     }
     return children;
 }

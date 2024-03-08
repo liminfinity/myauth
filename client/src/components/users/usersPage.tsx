@@ -9,9 +9,9 @@ export default function UsersPage() {
   const {isLoading} = useAppSelector(state => state.users)
   console.log(isLoading)
   return (
-    <main>
+    <>
       <SearchForm/>
-      <UsersList/>
-    </main>
+      <UsersList className='myGrid grid gap-4 px-8'/>
+    </>
   )
 }

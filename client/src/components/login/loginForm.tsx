@@ -8,10 +8,11 @@ import { useImmer } from 'use-immer'
 import { useAppDispatch, useAppSelector } from '../../hook/reduxHooks'
 import { loginAction } from '../../store/reducers/authReducer'
 import { locationState } from '../../types/routers'
+import InputFields from '../auth/inputFields'
+import Form from '../common/form'
 
 export default function LoginForm() {
     const location = useLocation();
-    console.log(location)
     const {from} = location.state as locationState || {}
     const {user} = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch();
@@ -29,23 +30,23 @@ export default function LoginForm() {
         })
     }
 
-    function handleSubmit(e?: FormEvent) {
-        e?.preventDefault();
+    function handleSubmit(e: FormEvent) {
+        e.preventDefault();
         dispatch(loginAction(form))
     }
     return (
-        <form onSubmit={handleSubmit}>
-            <fieldset>
+        <Form handleSubmit={handleSubmit}>
+            <InputFields>
                 <AuthInput icon={faEnvelope} name='email'type='email' placeholder='Email' 
                 handleChange={handleChange} value={form.email}/>
                 <AuthInput icon={faLock} name='password' type='password' placeholder='Password' 
                 handleChange={handleChange} value={form.password}/>
-            </fieldset>
-            <section>
+            </InputFields>
+            <section className='flex justify-between items-center gap-3'>
                 <RememberCB name='rememberMe' checked={form.rememberMe} handleChange={handleChange}/>
-                <Link to='/check-email' state={{from: location.pathname}}>Forgot password?</Link>
+                <Link className='link text-sm hover:text-blue transition-all' to='/auth/check-email' state={{from: location.pathname}}>Forgot password?</Link>
             </section>
-            <Button type='submit'>Log in with your account</Button>
-        </form>
+            <Button type='submit' className='authButton'>Log in with your account</Button>
+        </Form>
   )
 }

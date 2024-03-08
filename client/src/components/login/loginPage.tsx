@@ -8,13 +8,13 @@ import { Link, useLocation } from 'react-router-dom'
 export default function LoginPage() {
   const location = useLocation();
   return (
-    <main>
-      <Title level={1}>Log in</Title>
+    <>
+      <Title level={1} className='self-start'>Log in</Title>
       <LoginForm/>
-      <Link to='/signup' state={{from: location.pathname}}>
-        <Description>New user?</Description>
-        <Description>Create account</Description>
+      <Link className='prompt w-full' to='/auth/signup' state={{from: location.pathname}}>
+        <Description className='font-medium'>New user?</Description>
+        <Description> Create account</Description>
       </Link>
-    </main>
+    </>
   )
 }

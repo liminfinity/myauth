@@ -2,24 +2,23 @@
 import defaultTheme from 'tailwindcss/defaultTheme'
 export default {
   content: [
-    "./src/**/*.{jsx, tsx, js, ts}"
+    "./src/**/*.{tsx,jsx,js,ts}"
   ],
   theme: {
     extend: {
+      padding: {
+        '128': '32rem'
+      },
       colors: {
-        friendMessage: '#ebf3fe',
-        myMessage: '#f7f7f9',
         title: '#151450',
-        text_color_main: '#9ea1b7',
-        sendMessage: '#4694f9',
-        sendMessageHover: '#428ae8',
-        sendMessageDisabled: '#428ae886',
+        text_mainColor: '#9ea1b7',
+        blue: '#4694f9',
+        blueHover: '#6EADFF',
+        blueDisabled: '#428ae886',
         mainColor: '#FFF',
         secondColor: '#f5f6fa',
-        onlineStatus: '#48d984',
-        offlineStatus: '#ebeced',
-        text_color_myName: '#79b0fa',
-        error: '#ea5656'
+        error: '#ea5656',
+        success: '#99ECA6'
       },
       
       transitionDuration: {

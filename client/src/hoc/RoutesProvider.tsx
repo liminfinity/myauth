@@ -11,15 +11,19 @@ import MainLayout from '../components/layout/mainLayout'
 import CheckEmailPage from '../components/forgot/checkEmailPage'
 import SendCodePage from '../components/forgot/sendCodePage'
 import RestorePasswordPage from '../components/forgot/restorePasswordPage'
+import AuthLayout from '../components/layout/authLayout'
 
 export default function RoutesProvider() {
     const routes = <>
                         {/* <Route path='/' element={<Navigate to='/login' replace/>}></Route> */}
-                        <Route path='/login' element={<LoginPage/>}></Route>
-                        <Route path='/signup' element={<SignupPage/>}></Route>
-                        <Route path='/check-email' element={<CheckEmailPage/>}></Route>
-                        <Route path='/send-code' element={<SendCodePage/>}></Route>
-                        <Route path='/restore-password' element={<RestorePasswordPage/>}></Route>
+                        <Route path='/auth' element={<AuthLayout/>}>
+                            <Route path='login' element={<LoginPage/>}></Route>
+                            <Route path='signup' element={<SignupPage/>}></Route>
+                            <Route path='check-email' element={<CheckEmailPage/>}></Route>
+                            <Route path='send-code' element={<SendCodePage/>}></Route>
+                            <Route path='restore-password' element={<RestorePasswordPage/>}></Route>
+                        </Route>
+                        
                         <Route path='/' element={
                             <RequireAuth>
                                 <MainLayout/>

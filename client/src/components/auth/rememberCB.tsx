@@ -9,9 +9,9 @@ interface RememberCBProps extends DefaultProps, CheckBoxProps {
 
 export default function RememberCB({className, checked, handleChange, name}: RememberCBProps) {
   return (
-    <label className={className}>
+    <label className={'text-sm flex justify-center items-center gap-1 ' + (className ?? '')}>
       <CheckBox name={name} checked={checked} handleChange={handleChange} />
-      <Description>Remember me?</Description>
+      <Description className={'cursor-pointer transition-all duration-100 ' + (checked ? 'text-blue ' : '')}>Remember me?</Description>
     </label>
   )
 }

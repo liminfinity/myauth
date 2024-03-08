@@ -8,18 +8,11 @@ interface authState {
     user: IUser | null,
     isLoading: boolean,
     errors: string[],
-    activatedEmail: string | undefined
 }
 const initialState: authState = {
     user: null,
-    // user: {
-    //     userId: "41562c8a-aac2-4110-872e-b5d30ddd7c65",
-    //     username: 'Artem',
-    //     email: 'polllll@gmail.com'
-    // },
     isLoading: false,
     errors: [],
-    activatedEmail: undefined
 }
 
 export const loginAction = createAsyncThunk<IUser, LoginReq, {rejectValue: string}>(
@@ -45,17 +38,6 @@ export const logoutAction = createAsyncThunk<undefined, undefined, {rejectValue:
     }
 )
 
-// export const checkEmail = createAsyncThunk<string, string, {rejectValue: string}>(
-//     'auth/checkEmail',
-//     async function (signupReq, {rejectWithValue}) {
-//         try {
-//             const email = await AuthService.signUp(signupReq);
-//             return email;
-//         } catch (err) {
-//             rejectWithValue(err.message)
-//         }
-//     }
-// )
 
 export const signUpAction = createAsyncThunk<string, SignUpReq, {rejectValue: string}>(
     'auth/signup',
@@ -110,12 +92,12 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.errors = [];
             state.user = action.payload
+        },
+        setLoading(state, action: PayloadAction<boolean>) {
+            state.isLoading = action.payload
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(signUpAction.fulfilled, (state, action: PayloadAction<string>) => {
-            state.activatedEmail = action.payload;
-        })
         
         builder.addCase(loginAction.fulfilled, (state, action: PayloadAction<IUser>) => {
 
@@ -145,16 +127,15 @@ const authSlice = createSlice({
         builder.addMatcher(isPending, (state) => {
             state.isLoading = true;
             state.errors = [];
-            state.activatedEmail = undefined;
+
         })
         builder.addMatcher(isError, (state, action: PayloadAction<string>) => {
             state.isLoading = false;
             state.errors.push(action.payload);
-            state.activatedEmail = undefined;
         })
 
     },
 
 })
-export const {setUser} = authSlice.actions
+export const {setUser, setLoading} = authSlice.actions
 export default authSlice.reducer

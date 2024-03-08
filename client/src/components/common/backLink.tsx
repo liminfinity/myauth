@@ -13,8 +13,8 @@ interface BackBtnProps extends DefaultProps {
 
 export default function BackLink({className, to, state, replace}: BackBtnProps) {
   return (
-    <Link className={className} to={to} state={state} replace={replace}>
-        <FontAwesomeIcon icon={faArrowLeft}/>
+    <Link className={'flex justify-center items-center link self-start transition-all hover:text-blue ' + (className ?? '')} to={to} state={state} replace={replace}>
+        <FontAwesomeIcon className='w-6 h-6' icon={faArrowLeft}/>
     </Link>
   )
 }

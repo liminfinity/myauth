@@ -10,6 +10,6 @@ const defaultImg = 'https://images.unsplash.com/photo-1633332755192-727a05c4013d
 
 export default function Avatar({className, src = defaultImg}: AvatarProps) {
   return (
-    <img className={'avatar' + (className ?? '')} src={src} alt="user avatar"/>
+    <img className={'avatar ' + (className ?? '')} src={src} alt="user avatar"/>
   )
 }

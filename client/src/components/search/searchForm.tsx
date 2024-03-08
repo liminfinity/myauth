@@ -21,7 +21,7 @@ export default function SearchForm() {
     }
   return (
     <form onSubmit={handleSubmit}>
-        <AuthInput icon={faSearch} value={query} handleChange={handleChange} placeholder='Search'/>
+        <AuthInput icon={faSearch} value={query} handleChange={handleChange} placeholder='Search' type='search'/>
     </form>
   )
 }
