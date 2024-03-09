@@ -26,7 +26,6 @@ export class AuthService {
             }
         });
         localStorage.removeItem('accessToken');
-        console.log(res.data.isDeleted)
         return res.data.isDeleted;
     }
     static async refresh() {

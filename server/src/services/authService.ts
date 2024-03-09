@@ -8,11 +8,14 @@ import { emailService } from "./emailService";
 import { AuthResponse, RegResponse } from "../types/responseTypes";
 import { config } from "dotenv";
 import { ApiError } from "../errors/ApiError";
+import { captchaService } from "./captchaService";
 
 config()
 
 class AuthService {
-    async login(email: string, password: string, userAgent: string): Promise<AuthResponse> {
+    async login(email: string, password: string, userAgent: string, captcha: string | null): Promise<AuthResponse> {
+        const success = await captchaService.isValidCaptcha(captcha);
+        if (!success) throw new Error(`Captcha failed`)
         const isActivated = await authDAL.isActivated(email);
         if (!isActivated) throw ApiError.NotActivatedError();
         const user = await authDAL.login(email, password);
@@ -22,7 +25,9 @@ class AuthService {
 
         return {user, accessToken, refreshToken}
     }  
-    async registration(newUser: User, userAgent: string): Promise<RegResponse> {
+    async registration(newUser: User, userAgent: string, captcha: string | null): Promise<RegResponse> {
+        const success = await captchaService.isValidCaptcha(captcha);
+        if (!success) throw new Error(`Captcha failed`)
         const hashPassword = await hash(newUser.password, 3);
         const user: User = {...newUser, password: hashPassword, userId: uuid()};
         const activationInfo: UserActivationInfo = {

@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { IUser } from "../../types/models";
 import { isError, isPending, isFulfilled } from "../../utils/predicates";
 import { UserService } from "../../services/UserService";
+import { getErrorMessage } from "../../utils/format";
 
 interface usersState {
     usersList: IUser[],
@@ -20,7 +21,8 @@ export const getUsersAction = createAsyncThunk<IUser[], string, {rejectValue: st
             const users = await UserService.getUsers(query);
             return users;
         } catch (err) {
-            rejectWithValue(err.message)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
         
     }
@@ -30,7 +32,9 @@ const usersSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-
+        shiftError(state) {
+            state.errors.shift();
+        }
     },
     extraReducers: (builder) => {
         
@@ -43,7 +47,6 @@ const usersSlice = createSlice({
         })
         builder.addMatcher(isPending, (state) => {
             state.isLoading = true;
-            state.errors = [];
         })
         builder.addMatcher(isError, (state, action: PayloadAction<string>) => {
             state.isLoading = false;
@@ -51,5 +54,6 @@ const usersSlice = createSlice({
         })
     },
 })
+export const {shiftError} = usersSlice.actions
 
 export default usersSlice.reducer

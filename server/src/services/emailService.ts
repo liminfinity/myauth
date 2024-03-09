@@ -1,5 +1,8 @@
 import {createTransport, Transporter} from 'nodemailer'
 import { config } from 'dotenv'
+import {readFileSync} from 'fs'
+import {render} from 'pug'
+import {resolve} from 'path'
 config()
 class EmailService {
     private transporter: Transporter
@@ -15,35 +18,35 @@ class EmailService {
     }
 
     async sendActivationMail(to: string, activationLink: string) {
+        const pugTemplate = readFileSync(resolve('src/email/activationLink.pug'), 'utf8');
+        const htmlTemplate = render(pugTemplate, {
+            title: 'Activate your account to verify your identity',
+            link: activationLink,
+            content: 'Activation link',
+            filename: resolve('src/email/*')
+        })
         await this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,
             subject: 'Account activation',
             text: '',
-            html: 
-                `
-                    <main>
-                        <h2>Activate your account to verify your identity</h2>
-                        <a href='${activationLink}'>Activation link</a>
-                    </main>
-                `
+            html: htmlTemplate
 
         })
     }
     async sendCode(to: string, recoveryCode: string) {
+        const pugTemplate = readFileSync(resolve('src/email/sendCode.pug'), 'utf8');
+        const htmlTemplate = render(pugTemplate, {
+            title: 'Password recovery code',
+            code: recoveryCode,
+            filename: resolve('src/email/*')
+        })
         await this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,
             subject: 'Send code',
             text: '',
-            html: 
-                `
-                    <main>
-                        <h2>Password recovery code</h2>
-                        <span>${recoveryCode}</span>
-                    </main>
-                `
-
+            html: htmlTemplate,
         })
     }
 }

@@ -10,7 +10,8 @@ import { ForgotService } from '../../services/ForgotService'
 import BackLink from '../common/backLink'
 import Form from '../common/form'
 import { useAppDispatch } from '../../hook/reduxHooks'
-import { setLoading } from '../../store/reducers/authReducer'
+import { pushError, setLoading } from '../../store/reducers/authReducer'
+import { getErrorMessage } from '../../utils/format'
 export default function CheckEmailPage() {
   const dispatch = useAppDispatch();
 
@@ -23,12 +24,17 @@ export default function CheckEmailPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     dispatch(setLoading(true));
-    const validated = await ForgotService.checkEmail(verifyEmail);
-    if (validated) {
-     navigate('/auth/send-code', {
-      state:{from: location.pathname, email: verifyEmail}
-     })
+    try {
+      const validated = await ForgotService.checkEmail(verifyEmail);
+      if (validated) {
+      navigate('/auth/send-code', {
+        state:{from: location.pathname, email: verifyEmail}
+      })
+      }
+    } catch(err) {
+      dispatch(pushError(getErrorMessage(err as Error)))
     }
+    
     dispatch(setLoading(false));
   }
   return (

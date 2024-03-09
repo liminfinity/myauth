@@ -3,3 +3,8 @@ export function minuteFormatBySecond(second: number) {
     const restSeconds = String(second % 60);
     return '0'.repeat(2 - minutes.length) + minutes + ':' + '0'.repeat(2 - restSeconds.length) + restSeconds;
 }
+
+export function getErrorMessage(err: Error) {
+    const {message} =  err?.response?.data || err.message;
+    return message
+}

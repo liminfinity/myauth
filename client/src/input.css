@@ -12,7 +12,7 @@
     @apply flex justify-center flex-col gap-8 w-full
 }
 .login-wrapper {
-    @apply h-screen px-3 sm:px-32 md:px-48 lg:px-72 xl:px-128 flex items-center
+    @apply justify-center h-screen px-3 sm:px-32 md:px-48 lg:px-72 xl:px-128 flex items-center
 }
 .title {
     @apply text-blue text-xl
@@ -24,13 +24,13 @@
     @apply button text-white bg-blue hover:bg-blueHover
 }
 .form {
-    @apply flex flex-col gap-3
+    @apply flex flex-col gap-5
 }
 .input {
     @apply p-2 outline-none outline-offset-0 rounded-sm transition-all
 }
 .error {
-    @apply py-3 px-7 rounded-full bg-error text-mainColor text-center
+    @apply py-3 px-7 rounded-full bg-error text-mainColor text-center animate-openError
 }
 .success {
     @apply  text-blue border-2 border-blue text-center rounded-full py-2 px-6 outline-blue

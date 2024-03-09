@@ -3,6 +3,7 @@ import { IUser } from "../../types/models";
 import { LoginReq, SignUpReq } from "../../types/request";
 import { AuthService } from "../../services/AuthService";
 import { isError, isPending, isFulfilled } from "../../utils/predicates";
+import { getErrorMessage } from "../../utils/format";
 
 interface authState {
     user: IUser | null,
@@ -23,7 +24,8 @@ export const loginAction = createAsyncThunk<IUser, LoginReq, {rejectValue: strin
             console.log(user)
             return user;
         } catch (err) {
-            rejectWithValue(`Login error`)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
     }
 )
@@ -33,7 +35,8 @@ export const logoutAction = createAsyncThunk<undefined, undefined, {rejectValue:
         try {
             await AuthService.logout();
         } catch (err) {
-            rejectWithValue(err.message)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
     }
 )
@@ -46,7 +49,8 @@ export const signUpAction = createAsyncThunk<string, SignUpReq, {rejectValue: st
             const email = await AuthService.signUp(signupReq);
             return email;
         } catch (err) {
-            rejectWithValue(err.message)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
     }
 )
@@ -57,7 +61,8 @@ export const refreshAction = createAsyncThunk<IUser, undefined, {rejectValue: st
             const user = await AuthService.refresh();
             return user;
         } catch (err) {
-            rejectWithValue(err.message)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
     }
 )
@@ -68,7 +73,8 @@ export const deleteAccountAction = createAsyncThunk<boolean, string, {rejectValu
             const deleted = await AuthService.deleteAccount(userId);
             return deleted;
         } catch (err) {
-            rejectWithValue(err.message)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
     }
 )
@@ -79,7 +85,8 @@ export const checkAuthAction = createAsyncThunk<IUser, undefined, {rejectValue: 
             const user = await AuthService.checkAuth();
             return user;
         } catch (err) {
-            rejectWithValue(err.message)
+            const message = getErrorMessage(err as Error)
+            throw rejectWithValue(message)
         }
     }
 )
@@ -95,6 +102,12 @@ const authSlice = createSlice({
         },
         setLoading(state, action: PayloadAction<boolean>) {
             state.isLoading = action.payload
+        },
+        shiftError(state) {
+            state.errors.shift();
+        },
+        pushError(state, action: PayloadAction<string>) {
+            state.errors.push(action.payload);
         }
     },
     extraReducers: (builder) => {
@@ -126,8 +139,6 @@ const authSlice = createSlice({
         })
         builder.addMatcher(isPending, (state) => {
             state.isLoading = true;
-            state.errors = [];
-
         })
         builder.addMatcher(isError, (state, action: PayloadAction<string>) => {
             state.isLoading = false;
@@ -137,5 +148,5 @@ const authSlice = createSlice({
     },
 
 })
-export const {setUser, setLoading} = authSlice.actions
+export const {setUser, setLoading, shiftError, pushError} = authSlice.actions
 export default authSlice.reducer

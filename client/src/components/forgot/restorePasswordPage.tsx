@@ -4,12 +4,13 @@ import { useImmer } from 'use-immer';
 import { locationState } from '../../types/routers';
 import { ForgotService } from '../../services/ForgotService';
 import { useAppDispatch } from '../../hook/reduxHooks';
-import { setLoading, setUser } from '../../store/reducers/authReducer';
+import { pushError, setLoading, setUser } from '../../store/reducers/authReducer';
 import AuthInput from '../auth/authInput';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import Button from '../common/button';
 import Title from '../common/title';
 import Form from '../common/form';
+import { getErrorMessage } from '../../utils/format';
 export default function RestorePasswordPage() {
   const dispatch = useAppDispatch();
   const [form, setForm] = useImmer({
@@ -30,13 +31,18 @@ export default function RestorePasswordPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     dispatch(setLoading(true));
-    const user = await ForgotService.restorePassword(email, form.password, form.confirmPassword);
-    if (user) {
-      dispatch(setUser(user))
-      navigate('/', {
-        replace: true
-      })
+    try {
+      const user = await ForgotService.restorePassword(email, form.password, form.confirmPassword);
+      if (user) {
+        dispatch(setUser(user))
+        navigate('/', {
+          replace: true
+        })
+      }
+    } catch(err) {
+      dispatch(pushError(getErrorMessage(err as Error)))
     }
+    
     dispatch(setLoading(false));
   }
   return (

@@ -7,14 +7,15 @@ import { authService } from "../services/authService";
 import { AuthResponse, RegResponse } from "../types/responseTypes";
 import { isEmpty } from "../utils/objectMethods";
 import { config } from "dotenv";
+import { loginReuest, signUpReuest } from "../types/requestTypes";
 config()
 class AuthController {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const loginData: User & {rememberMe: Boolean} = req.body;
-            const {email, password, rememberMe} = await loginSchema.validate(loginData);
+            const loginData: loginReuest = req.body;
+            const {email, password, rememberMe, captcha} = await loginSchema.validate(loginData);
             const userAgent = req.get('user-agent') as string;
-            const authResponse: AuthResponse = await authService.login(email, password, userAgent);
+            const authResponse: AuthResponse = await authService.login(email, password, userAgent, captcha);
             res.clearCookie('refreshToken');
             if (rememberMe) {
                 res.cookie('refreshToken', authResponse.refreshToken, {
@@ -32,11 +33,15 @@ class AuthController {
     }
     async registration(req: Request, res: Response, next: NextFunction) {
         try {
-            let user: User & {rememberMe: Boolean} = req.body;
+            let user: signUpReuest = req.body;
             const userAgent = req.get('user-agent') as string;
             if (isEmpty(user)) throw ApiError.BadRequest(`User hasn't been founded`);
             user = await userSchema.validate(user);
-            const authResponse: RegResponse = await authService.registration(user, userAgent);
+            const authResponse: RegResponse = await authService.registration({
+                email: user.email,
+                password: user.password,
+                username: user.username}, 
+            userAgent, user.captcha);
             res.clearCookie('refreshToken');
             if (user.rememberMe) {
                 res.cookie('refreshToken', authResponse.refreshToken, {

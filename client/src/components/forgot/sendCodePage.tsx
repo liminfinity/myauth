@@ -8,10 +8,10 @@ import Button from '../common/button';
 import Input from '../common/input';
 import BackLink from '../common/backLink';
 import { useCountDown } from '../../hook/useCountDown';
-import { minuteFormatBySecond } from '../../utils/format';
+import { getErrorMessage, minuteFormatBySecond } from '../../utils/format';
 import Form from '../common/form';
 import { useAppDispatch } from '../../hook/reduxHooks';
-import { setLoading } from '../../store/reducers/authReducer';
+import { pushError, setLoading } from '../../store/reducers/authReducer';
 import OTPInput from '../auth/otpInput';
 export default function SendCodePage() {
   const startNumber = 30;
@@ -31,17 +31,26 @@ export default function SendCodePage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     dispatch(setLoading(true));
-    const validated = await ForgotService.sendCode(email, recoveryCode.join(''));
-    if (validated) {
-      navigate('/auth/restore-password', {
-        state:{from: location.pathname, email: email}
-       })
+    try {
+      const validated = await ForgotService.sendCode(email, recoveryCode.join(''));
+      if (validated) {
+        navigate('/auth/restore-password', {
+          state:{from: location.pathname, email: email}
+        })
+      }
+    } catch(err) {
+      dispatch(pushError(getErrorMessage(err as Error)))
     }
+    
     dispatch(setLoading(false));
   }
   async function sendAgain() {
     dispatch(setLoading(true));
-    await ForgotService.generateNewCode(email);
+    try {
+      await ForgotService.generateNewCode(email);
+    } catch(err) {
+      dispatch(pushError(getErrorMessage(err as Error)))
+    }
     dispatch(setLoading(false));
     timerId.current = setTimeout(function start() {
       setIndicator(prevState => {

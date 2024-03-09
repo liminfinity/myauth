@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent } from 'react'
+import React, { ChangeEvent, FormEvent, useRef } from 'react'
 import RememberCB from '../auth/rememberCB'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import AuthInput from '../auth/authInput'
@@ -10,12 +10,15 @@ import { loginAction } from '../../store/reducers/authReducer'
 import { locationState } from '../../types/routers'
 import InputFields from '../auth/inputFields'
 import Form from '../common/form'
+import ReCAPTCHA from 'react-google-recaptcha'
+import config from '../../../config.json'
 
 export default function LoginForm() {
     const location = useLocation();
     const {from} = location.state as locationState || {}
     const {user} = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch();
+    const captchaRef = useRef<ReCAPTCHA>(null);
     const [form, setForm] = useImmer({
         email: '',
         password: '',
@@ -32,7 +35,9 @@ export default function LoginForm() {
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
-        dispatch(loginAction(form))
+        if (captchaRef.current) {
+            dispatch(loginAction({...form, captcha: captchaRef.current.getValue()}))
+        }
     }
     return (
         <Form handleSubmit={handleSubmit}>
@@ -46,6 +51,7 @@ export default function LoginForm() {
                 <RememberCB name='rememberMe' checked={form.rememberMe} handleChange={handleChange}/>
                 <Link className='link text-sm hover:text-blue transition-all' to='/auth/check-email' state={{from: location.pathname}}>Forgot password?</Link>
             </section>
+            <ReCAPTCHA sitekey={config.ReCAPTCHA_SITE} ref={captchaRef} className='rounded-full self-center'/>
             <Button type='submit' className='authButton'>Log in with your account</Button>
         </Form>
   )
