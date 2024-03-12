@@ -3,7 +3,6 @@ import Avatar from '../common/avatar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import ProfileMenu from './profileMenu'
-import Loader from '../common/loader'
 
 export default function ProfileHeader() {
   const [isOpen, setOpen] = useState(false);
@@ -14,8 +13,10 @@ export default function ProfileHeader() {
   const modalRef = useRef<HTMLDivElement>(null);
 
   function handleOutsideClick(e: MouseEvent) {
-    if (!modalRef.current.contains(e.target)) {
-      setOpen(false)
+    if (modalRef.current) {
+      if (!modalRef.current.contains(e.target as Node | null)) {
+        setOpen(false)
+      }
     }
   }
   useEffect(() => {

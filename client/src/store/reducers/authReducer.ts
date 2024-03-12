@@ -21,7 +21,6 @@ export const loginAction = createAsyncThunk<IUser, LoginReq, {rejectValue: strin
     async function (loginReq, {rejectWithValue}) {
         try {
             const user = await AuthService.login(loginReq);
-            console.log(user)
             return user;
         } catch (err) {
             const message = getErrorMessage(err as Error)

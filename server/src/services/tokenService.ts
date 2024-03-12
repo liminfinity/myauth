@@ -20,9 +20,9 @@ class TokenService {
             return null;
         }
     }
-    verifyRefreshToken(refresh: string) {
+    verifyRefreshToken(refreshToken: string) {
         try {
-            const user = jwt.verify(refresh, process.env.JWT_REFRESH_SECRET as string) as UserDTO;
+            const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as UserDTO;
             return user;
         } catch (error) {
             return null;

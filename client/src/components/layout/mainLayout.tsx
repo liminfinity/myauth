@@ -9,7 +9,6 @@ import { shiftError } from '../../store/reducers/usersReducer'
 
 export default function MainLayout() {
   const {isLoading, errors} = useAppSelector(state => state.users)
-  console.log(errors)
   return (
     <div className='grid grid-cols-1 grid-rows-6 justify-center'>
         {isLoading && <Loader/>}

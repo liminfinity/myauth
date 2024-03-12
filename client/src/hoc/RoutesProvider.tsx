@@ -15,7 +15,6 @@ import AuthLayout from '../components/layout/authLayout'
 
 export default function RoutesProvider() {
     const routes = <>
-                        {/* <Route path='/' element={<Navigate to='/login' replace/>}></Route> */}
                         <Route path='/auth' element={<AuthLayout/>}>
                             <Route path='login' element={<LoginPage/>}></Route>
                             <Route path='signup' element={<SignupPage/>}></Route>

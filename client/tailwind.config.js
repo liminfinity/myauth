@@ -27,10 +27,6 @@ export default {
       transitionTimingFunction: {
         DEFAULT: 'ease-in-out'
       },
-      boxShadow: {
-        activeFriend: 'inset 0px 2px 25px 5px rgba(158, 161, 183, 0.15)',
-        activeUser: 'inset 0px 2px 25px 5px rgba(158, 161, 183, 0.3)'
-      },
       keyframes: {
         error: {
           "0%": {
