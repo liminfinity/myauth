@@ -13,12 +13,14 @@ create table userActivations (
 create table tokens (
 	userId uuid not null references users (userId) on delete cascade,
 	token text not null,
-	userAgent text not null
+	userAgent text not null,
+	created_at timestamp default current_timestamp
 );
 create table recoveryCodes (
 	id serial primary key,
 	email varchar(40) unique not null,
-	recoveryCode varchar(10) not null
+	recoveryCode varchar(10) not null,
+	created_at timestamp default current_timestamp
 )
 create or replace function compareWithTemplate(template_search text, username text) 
 returns boolean as $$
